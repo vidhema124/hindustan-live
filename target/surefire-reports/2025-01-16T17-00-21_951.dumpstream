@@ -1,0 +1,5 @@
+# Created at 2025-01-16T17:00:22.652
+Boot Manifest-JAR contains absolute paths in classpath 'e:\hindustanlive\Hindustan backend\hindustan-live\target\test-classes'
+Hint: <argLine>-Djdk.net.URLClassPath.disableClassPathURLCheck=true</argLine>
+'other' has different root
+

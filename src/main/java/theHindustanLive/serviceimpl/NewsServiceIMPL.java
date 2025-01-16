@@ -40,7 +40,7 @@ public class NewsServiceIMPL implements NewsService {
 		RSS_URLS.put("https://indianexpress.com/feed/", "Sports");
 		RSS_URLS.put("https://www.thehindu.com/sci-tech/health/feeder/default.rss", "Health");
 		PUBLISHER_ICONS.put("The Hindu",
-				"https://india.mom-gmr.org/uploads/_processed_/a/0/csm_16509-1592_import_9d5d49a7d6.png");
+				"https://vfic.tamu.edu/files/2014/03/LogoThe-Hindu2.png");
 		PUBLISHER_ICONS.put("The Indian Express",
 				"https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/The_Indian_Express_logo.svg/606px-The_Indian_Express_logo.svg.png");
 	}
