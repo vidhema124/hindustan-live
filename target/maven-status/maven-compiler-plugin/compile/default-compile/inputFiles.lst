@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 e:\hindustanlive\Hindustan backend\hindustan-live\src\main\java\theHindustanLive\config\CorsConfig.java
 e:\hindustanlive\Hindustan backend\hindustan-live\src\main\java\theHindustanLive\controller\CategoryController.java
 e:\hindustanlive\Hindustan backend\hindustan-live\src\main\java\theHindustanLive\controller\NewsController.java
@@ -10,3 +11,17 @@ e:\hindustanlive\Hindustan backend\hindustan-live\src\main\java\theHindustanLive
 e:\hindustanlive\Hindustan backend\hindustan-live\src\main\java\theHindustanLive\serviceimpl\CategoryServiceIMPL.java
 e:\hindustanlive\Hindustan backend\hindustan-live\src\main\java\theHindustanLive\serviceimpl\NewsServiceIMPL.java
 e:\hindustanlive\Hindustan backend\hindustan-live\src\main\java\theHindustanLive\TheHindustanLiveApplication.java
+=======
+e:\NewCode\hindustan-live\src\main\java\theHindustanLive\config\CorsConfig.java
+e:\NewCode\hindustan-live\src\main\java\theHindustanLive\controller\CategoryController.java
+e:\NewCode\hindustan-live\src\main\java\theHindustanLive\controller\NewsController.java
+e:\NewCode\hindustan-live\src\main\java\theHindustanLive\entity\CategoryEntity.java
+e:\NewCode\hindustan-live\src\main\java\theHindustanLive\entity\NewsEntity.java
+e:\NewCode\hindustan-live\src\main\java\theHindustanLive\respository\CategoryRespository.java
+e:\NewCode\hindustan-live\src\main\java\theHindustanLive\respository\NewRespository.java
+e:\NewCode\hindustan-live\src\main\java\theHindustanLive\service\CategoryService.java
+e:\NewCode\hindustan-live\src\main\java\theHindustanLive\service\NewsService.java
+e:\NewCode\hindustan-live\src\main\java\theHindustanLive\serviceimpl\CategoryServiceIMPL.java
+e:\NewCode\hindustan-live\src\main\java\theHindustanLive\serviceimpl\NewsServiceIMPL.java
+e:\NewCode\hindustan-live\src\main\java\theHindustanLive\TheHindustanLiveApplication.java
+>>>>>>> 0801785132b3a968e072a50b99d795f9a666a4dc

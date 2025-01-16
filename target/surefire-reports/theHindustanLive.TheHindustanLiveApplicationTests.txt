@@ -1,4 +1,11 @@
+<<<<<<< HEAD
 -------------------------------------------------------------------------------
 Test set: theHindustanLive.TheHindustanLiveApplicationTests
 -------------------------------------------------------------------------------
 Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 13.74 s -- in theHindustanLive.TheHindustanLiveApplicationTests
+=======
+-------------------------------------------------------------------------------
+Test set: theHindustanLive.TheHindustanLiveApplicationTests
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 12.14 s -- in theHindustanLive.TheHindustanLiveApplicationTests
+>>>>>>> 0801785132b3a968e072a50b99d795f9a666a4dc
