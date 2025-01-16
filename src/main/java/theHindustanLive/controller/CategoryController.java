@@ -45,6 +45,7 @@ public class CategoryController {
 		Optional<CategoryEntity> response = categoryService.categoryGetById(id);
 		return response;
 	}
+	
 
 	@PutMapping("/updateCategoryById/{id}")
 	public String updateById(@PathVariable("id") String id, @RequestBody CategoryEntity categoryEntity) {
