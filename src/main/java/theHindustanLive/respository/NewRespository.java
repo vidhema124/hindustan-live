@@ -20,6 +20,6 @@ public interface NewRespository extends MongoRepository<NewsEntity, String> {
 		    List<NewsEntity> findRandomNews();
 	  
 	  List<NewsEntity> findByCategory(String category);
-	  List<NewsEntity> findByTitleStartingWith(String firstWord);
+	  List<NewsEntity> findByTitleRegex(String regex);
 
 }

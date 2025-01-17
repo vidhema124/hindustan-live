@@ -217,9 +217,9 @@ public class NewsServiceIMPL implements NewsService {
 		return categoryNewsList;
 	}
 
-	 @Override
-	    public List<NewsEntity> getNewsByTitle(String firstWord) {
-	       
-	        return newRespository.findByTitleStartingWith(firstWord);
-	    }
+	@Override
+    public List<NewsEntity> getNewsByTitle(String title) {
+        String regex = "(?i).*" + title + ".*"; 
+        return newRespository.findByTitleRegex(regex);
+}
 }

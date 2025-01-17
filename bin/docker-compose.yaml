@@ -1,0 +1,7 @@
+version: '3.9'
+
+services:
+  app:
+    build: .
+    ports:
+      - "8080:8080"  # Expose port 8098 for the Spring Boot application

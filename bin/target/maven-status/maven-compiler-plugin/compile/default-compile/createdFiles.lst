@@ -1,0 +1,13 @@
+theHindustanLive\config\CorsConfig.class
+theHindustanLive\config\CorsConfig$1.class
+theHindustanLive\TheHindustanLiveApplication.class
+theHindustanLive\entity\NewsEntity.class
+theHindustanLive\serviceimpl\NewsServiceIMPL.class
+theHindustanLive\respository\NewRespository.class
+theHindustanLive\service\NewsService.class
+theHindustanLive\respository\CategoryRespository.class
+theHindustanLive\controller\NewsController.class
+theHindustanLive\serviceimpl\CategoryServiceIMPL.class
+theHindustanLive\controller\CategoryController.class
+theHindustanLive\entity\CategoryEntity.class
+theHindustanLive\service\CategoryService.class

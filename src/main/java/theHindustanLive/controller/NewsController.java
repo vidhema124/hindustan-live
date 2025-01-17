@@ -97,7 +97,6 @@ public class NewsController {
 	    }
 	 @GetMapping("/get-news-by-title")
 	    public ResponseEntity<List<NewsEntity>> getNewsByTitle(@RequestParam String title) {
-	        
 	        List<NewsEntity> response = newsService.getNewsByTitle(title);
 	        return ResponseEntity.ok(response);
 	    }
