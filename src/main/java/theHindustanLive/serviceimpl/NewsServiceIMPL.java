@@ -216,4 +216,10 @@ public class NewsServiceIMPL implements NewsService {
 		}
 		return categoryNewsList;
 	}
+
+	 @Override
+	    public List<NewsEntity> getNewsByTitle(String firstWord) {
+	       
+	        return newRespository.findByTitleStartingWith(firstWord);
+	    }
 }

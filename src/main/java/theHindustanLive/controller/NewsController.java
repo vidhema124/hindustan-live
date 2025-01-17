@@ -95,4 +95,10 @@ public class NewsController {
 	        List<Map<String, Object>> response = newsService.getNewsByCategory();
 	        return ResponseEntity.ok(response);
 	    }
+	 @GetMapping("/get-news-by-title")
+	    public ResponseEntity<List<NewsEntity>> getNewsByTitle(@RequestParam String title) {
+	        
+	        List<NewsEntity> response = newsService.getNewsByTitle(title);
+	        return ResponseEntity.ok(response);
+	    }
 }

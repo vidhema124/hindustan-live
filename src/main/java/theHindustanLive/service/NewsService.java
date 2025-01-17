@@ -19,6 +19,7 @@ import theHindustanLive.entity.NewsEntity;
 		List<NewsEntity> getRandomNews();
 		List<NewsEntity> getNewsByCategory(String category);
 		List<Map<String, Object>> getNewsByCategory();
+		List<NewsEntity> getNewsByTitle(String title);
 	
 	
 	}
