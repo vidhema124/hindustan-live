@@ -50,8 +50,9 @@ public class NewsController {
 	}
 
 	@GetMapping("/get-all-news")
-	public ResponseEntity<List<NewsEntity>> getAllNews() {
-		List<NewsEntity> response = newsService.getAllNews();
+	public ResponseEntity<List<NewsEntity>> getAllNews(@RequestParam(value = "page", defaultValue = "1") Integer pageNumber,
+			@RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
+		List<NewsEntity> response = newsService.getAllNews(pageNumber, pageSize);
 		return ResponseEntity.ok(response);
 	}
 
@@ -65,13 +66,14 @@ public class NewsController {
 		Optional<NewsEntity> response = newsService.newsGetById(id);
 		return ResponseEntity.ok(response);
 	}
+
 	@PutMapping("/updateNewsById/{id}")
 	public String updateProductById(@PathVariable("id") String id, @RequestBody NewsEntity newsEntity) {
 		Optional<NewsEntity> emp = newsService.findById(id);
 		if (emp.isPresent()) {
 			newsEntity.setId(id);
 			System.out.println("hello");
-			
+
 			newsService.saveNews(newsEntity);
 			return "Product Details updated";
 		} else {
@@ -81,7 +83,7 @@ public class NewsController {
 
 	@GetMapping("/get-random-news")
 	public ResponseEntity<List<NewsEntity>> getRandomNews() {
-		List<NewsEntity> response = newsService.getRandomNews();
+		List<NewsEntity> response = newsService.findRandomNewsWithImage();
 		return ResponseEntity.ok(response);
 	}
 
@@ -90,14 +92,16 @@ public class NewsController {
 		List<NewsEntity> response = newsService.getNewsByCategory(category);
 		return ResponseEntity.ok(response);
 	}
-	 @GetMapping("/getnews-by-category")
-	    public ResponseEntity<List<Map<String, Object>>> getNewsByCategory() {
-	        List<Map<String, Object>> response = newsService.getNewsByCategory();
-	        return ResponseEntity.ok(response);
-	    }
-	 @GetMapping("/get-news-by-title")
-	    public ResponseEntity<List<NewsEntity>> getNewsByTitle(@RequestParam String title) {
-	        List<NewsEntity> response = newsService.getNewsByTitle(title);
-	        return ResponseEntity.ok(response);
-	    }
+
+	@GetMapping("/getnews-by-category")
+	public ResponseEntity<List<Map<String, Object>>> getNewsByCategory() {
+		List<Map<String, Object>> response = newsService.getNewsByCategory();
+		return ResponseEntity.ok(response);
+	}
+
+	@GetMapping("/get-news-by-title")
+	public ResponseEntity<List<NewsEntity>> getNewsByTitle(@RequestParam String title) {
+	    List<NewsEntity> response = newsService.getNewsByTitle(title);
+	    return ResponseEntity.ok(response);
+	}
 }

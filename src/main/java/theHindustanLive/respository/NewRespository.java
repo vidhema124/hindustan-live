@@ -2,24 +2,28 @@ package theHindustanLive.respository;
 
 import java.util.List;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
 
 import theHindustanLive.entity.NewsEntity;
 
-
 public interface NewRespository extends MongoRepository<NewsEntity, String> {
 
-	
-	  @Aggregation(pipeline = {
-		        "{ '$sample': { 'size': 20 } }"
+	@Aggregation(pipeline = { "{ '$match': { 'imageUrl': { '$ne': null, '$nin': [''] } } }",
+			"{ '$sample': { 'size': 20 } }" })
+	List<NewsEntity> findRandomNewsWithImage();
+
+	@Aggregation(pipeline = {
+	        "{ $match: { category: ?0, imageUrl: { $ne: null, $ne: '' } } }"
+	    })
+	    List<NewsEntity> findByCategory(String category);
+
+	   @Aggregation(pipeline = {
+		        "{ $match: { title: { $regex: ?0, $options: 'i' }, imageUrl: { $ne: null, $ne: '' } } }"
 		    })
-
-
-			
-		    List<NewsEntity> findRandomNews();
-	  
-	  List<NewsEntity> findByCategory(String category);
-	  List<NewsEntity> findByTitleRegex(String regex);
-
+		    List<NewsEntity> findByTitleRegexWithImageUrl(String regex);
+	@Query("{ 'imageUrl': { $ne: null, $nin: [''] } }")
+	List<NewsEntity> findAllWithImageUrl(Pageable page, Integer pageNumber);
 }
