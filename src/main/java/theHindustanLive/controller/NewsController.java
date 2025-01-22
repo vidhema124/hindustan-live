@@ -107,4 +107,9 @@ public class NewsController {
 	    List<NewsEntity> response = newsService.getNewsByTitle(title);
 	    return ResponseEntity.ok(response);
 	}
+	@GetMapping("/testing/{id}")
+	public ResponseEntity<Optional<NewsEntity>> getByIdTesting(@PathVariable String id) {
+		Optional<NewsEntity> response = newsService.newsGetById(id);
+		return ResponseEntity.ok(response);
+	}
 }
