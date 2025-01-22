@@ -1,13 +1,12 @@
 package theHindustanLive.controller;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-
-
-
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -53,11 +52,20 @@ public class NewsController {
 	}
 
 	@GetMapping("/get-all-news")
-	public ResponseEntity<List<NewsEntity>> getAllNews(@RequestParam(value = "page", defaultValue = "1") Integer pageNumber,
-			@RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
-		List<NewsEntity> response = newsService.getAllNews(pageNumber, pageSize);
-		return ResponseEntity.ok(response);
+	public ResponseEntity<Map<String, Object>> getAllNews(
+	        @RequestParam(value = "page", defaultValue = "1") Integer pageNumber,
+	        @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
+	    
+	    Page<NewsEntity> pageResponse = newsService.getAllNews(pageNumber, pageSize);
+	    Map<String, Object> response = new HashMap<>();
+        response.put("news", pageResponse.getContent()); 
+	    response.put("totalPages", pageResponse.getTotalPages()); 
+	    response.put("currentPage", pageResponse.getNumber() + 1); 
+	   
+	    
+	    return ResponseEntity.ok(response);
 	}
+
 
 	@DeleteMapping("/delete-news/{id}")
 	public String deleteNews(@PathVariable String id) {

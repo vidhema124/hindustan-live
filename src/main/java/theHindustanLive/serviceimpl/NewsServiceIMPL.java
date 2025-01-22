@@ -16,6 +16,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -190,11 +191,11 @@ public class NewsServiceIMPL implements NewsService {
 	}
 
 	@Override
-	public List<NewsEntity> getAllNews(Integer pageNumber, Integer pageSize) {
-		Pageable page = PageRequest.of(pageNumber, pageSize);
-		List<NewsEntity> response = newRespository.findAllWithImageUrl(page, pageNumber);
-		return response;
+	public Page<NewsEntity> getAllNews(Integer pageNumber, Integer pageSize) {
+	    Pageable page = PageRequest.of(pageNumber - 1, pageSize); 
+	    return newRespository.findAllWithImageUrl(page,pageNumber);
 	}
+
 
 	@Override
 	public String deleteNewsById(String id) {

@@ -4,12 +4,14 @@
 import java.util.Map;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+
 import theHindustanLive.entity.NewsEntity;
 	
 	public interface NewsService {
 	
 	    void saveNews(List<NewsEntity> newsEntities);
-		List<NewsEntity> getAllNews(Integer pageNumber, Integer pageSize);
+		Page<NewsEntity> getAllNews(Integer pageNumber, Integer pageSize);
 		
 		String deleteNewsById(String id);
 		List<NewsEntity> fetchNewsFromRSS(String categoryFilter);
