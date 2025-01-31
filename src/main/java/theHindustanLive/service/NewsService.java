@@ -11,7 +11,7 @@ import theHindustanLive.entity.NewsEntity;
 	public interface NewsService {
 	
 	    void saveNews(List<NewsEntity> newsEntities);
-		Page<NewsEntity> getAllNews(Integer pageNumber, Integer pageSize);
+		Map<String, Object> getAllNews(Integer pageNumber, Integer pageSize);
 		
 		String deleteNewsById(String id);
 		List<NewsEntity> fetchNewsFromRSS(String categoryFilter);

@@ -55,16 +55,11 @@ public class NewsController {
 	public ResponseEntity<Map<String, Object>> getAllNews(
 	        @RequestParam(value = "page", defaultValue = "1") Integer pageNumber,
 	        @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
-	    
-	    Page<NewsEntity> pageResponse = newsService.getAllNews(pageNumber, pageSize);
-	    Map<String, Object> response = new HashMap<>();
-        response.put("news", pageResponse.getContent()); 
-	    response.put("totalPages", pageResponse.getTotalPages()); 
-	    response.put("currentPage", pageResponse.getNumber() + 1); 
-	   
-	    
+
+	    Map<String, Object> response = newsService.getAllNews(pageNumber, pageSize);
 	    return ResponseEntity.ok(response);
 	}
+
 
 
 	@DeleteMapping("/delete-news/{id}")

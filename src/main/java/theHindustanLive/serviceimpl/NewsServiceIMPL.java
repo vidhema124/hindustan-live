@@ -191,9 +191,16 @@ public class NewsServiceIMPL implements NewsService {
 	}
 
 	@Override
-	public Page<NewsEntity> getAllNews(Integer pageNumber, Integer pageSize) {
-	    Pageable page = PageRequest.of(pageNumber - 1, pageSize); 
-	    return newRespository.findAllWithImageUrl(page,pageNumber);
+	public Map<String, Object> getAllNews(Integer pageNumber, Integer pageSize) {
+	    Pageable pageable = PageRequest.of(pageNumber - 1, pageSize);
+	    Page<NewsEntity> pageResponse = newRespository.findAllWithImageUrl(pageable, pageNumber);
+
+	    Map<String, Object> response = new HashMap<>();
+	    response.put("news", pageResponse.getContent());
+	    response.put("totalPages", pageResponse.getTotalPages());
+	    response.put("currentPage", pageResponse.getNumber() + 1);
+
+	    return response;
 	}
 
 
