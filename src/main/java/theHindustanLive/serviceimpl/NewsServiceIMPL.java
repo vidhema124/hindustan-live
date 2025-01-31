@@ -26,7 +26,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
-
 import lombok.AllArgsConstructor;
 import theHindustanLive.entity.NewsEntity;
 import theHindustanLive.respository.NewRespository;
@@ -189,17 +188,70 @@ public class NewsServiceIMPL implements NewsService {
 	public void saveNews(List<NewsEntity> newsEntities) {
 		newRespository.saveAll(newsEntities);
 	}
-
+//
+//	@Override
+//	public Map<String, Object> getAllNews(Integer pageNumber, Integer pageSize, String sortByFirstLetter) {
+//		Pageable pageable = PageRequest.of(pageNumber - 1, pageSize);
+//		Page<NewsEntity> pageResponse = newRespository.findAll(pageable);
+//		List<NewsEntity> newsList = new ArrayList<>(pageResponse.getContent());
+//		newsList.sort((news1, news2) -> {
+//			String title1 = news1.getTitle();
+//			String title2 = news2.getTitle();
+//			if (!"none".equalsIgnoreCase(sortByFirstLetter)) {
+//				int letterComparison = Character.compare(title1.charAt(0), title2.charAt(0));
+//				if ("desc".equalsIgnoreCase(sortByFirstLetter)) {
+//					letterComparison = -letterComparison;
+//				}
+//				if (letterComparison != 0) {
+//					return letterComparison;
+//				}
+//			}
+//			return 0;
+//		});
+//		Map<String, Object> response = new HashMap<>();
+//		response.put("news", newsList);
+//		response.put("totalPages", pageResponse.getTotalPages());
+//		response.put("currentPage", pageResponse.getNumber() + 1);
+//		return response;
+//	}
 	@Override
-	public Map<String, Object> getAllNews(Integer pageNumber, Integer pageSize) {
+	public Map<String, Object> getAllNews(Integer pageNumber, Integer pageSize, String Order) {
 	    Pageable pageable = PageRequest.of(pageNumber - 1, pageSize);
-	    Page<NewsEntity> pageResponse = newRespository.findAllWithImageUrl(pageable, pageNumber);
+	    Page<NewsEntity> pageResponse = newRespository.findAll(pageable);
+	    List<NewsEntity> newsList = new ArrayList<>(pageResponse.getContent());
 
+	    // Sorting the newsList based on the first letter of the title
+	    newsList.sort((news1, news2) -> {
+	        String title1 = news1.getTitle();
+	        String title2 = news2.getTitle();
+
+	        // Check if sortByFirstLetter is 'none' or any other value
+	        if (!"none".equalsIgnoreCase(Order)) {
+	            // Get the first letter of the title
+	            char firstLetter1 = title1.charAt(0);
+	            char firstLetter2 = title2.charAt(0);
+
+	            // Compare first letters
+	            int letterComparison = Character.compare(firstLetter1, firstLetter2);
+
+	            // Reverse the order if 'desc' is passed
+	            if ("desc".equalsIgnoreCase(Order)) {
+	                letterComparison = -letterComparison;  // Reversing the comparison for descending order
+	            }
+
+	            // Return the comparison result if different from 0
+	            if (letterComparison != 0) {
+	                return letterComparison;
+	            }
+	        }
+	        return 0;  // Default behavior (no sorting)
+	    });
+
+	    // Preparing the response
 	    Map<String, Object> response = new HashMap<>();
-	    response.put("news", pageResponse.getContent());
+	    response.put("news", newsList);
 	    response.put("totalPages", pageResponse.getTotalPages());
 	    response.put("currentPage", pageResponse.getNumber() + 1);
-
 	    return response;
 	}
 
@@ -271,7 +323,8 @@ public class NewsServiceIMPL implements NewsService {
 
 	@Override
 	public List<NewsEntity> getNewsByTitle(String title) {
-	    String regex = "(?i).*" + title + ".*";  
-	    return newRespository.findByTitleRegexWithImageUrl(regex);  
+		String regex = "(?i).*" + title + ".*";
+		return newRespository.findByTitleRegexWithImageUrl(regex);
 	}
+
 }

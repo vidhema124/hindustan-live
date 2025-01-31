@@ -11,7 +11,7 @@ import theHindustanLive.entity.NewsEntity;
 	public interface NewsService {
 	
 	    void saveNews(List<NewsEntity> newsEntities);
-		Map<String, Object> getAllNews(Integer pageNumber, Integer pageSize);
+		Map<String, Object> getAllNews(Integer pageNumber, Integer pageSize, String Order);
 		
 		String deleteNewsById(String id);
 		List<NewsEntity> fetchNewsFromRSS(String categoryFilter);
@@ -22,6 +22,7 @@ import theHindustanLive.entity.NewsEntity;
 		List<Map<String, Object>> getNewsByCategory();
 		List<NewsEntity> getNewsByTitle(String title);
 		 List<NewsEntity> findRandomNewsWithImage();
+
 	
 	
 	}

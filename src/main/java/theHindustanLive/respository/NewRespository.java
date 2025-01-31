@@ -26,7 +26,10 @@ public interface NewRespository extends MongoRepository<NewsEntity, String> {
 		    })
 		    List<NewsEntity> findByTitleRegexWithImageUrl(String regex);
 	@Query("{ 'imageUrl': { $ne: null, $nin: [''] } }")
-
-
 	Page<NewsEntity> findAllWithImageUrl(Pageable page,Integer pageNumber);
+	
+	
+	
+	
+	Page<NewsEntity> findAllByOrderByTitleAsc(Pageable pageable);
 }

@@ -51,21 +51,22 @@ public class NewsController {
 		}
 	}
 
-	@GetMapping("/get-all-news")
-	public ResponseEntity<Map<String, Object>> getAllNews(
-	        @RequestParam(value = "page", defaultValue = "1") Integer pageNumber,
-	        @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
 
-	    Map<String, Object> response = newsService.getAllNews(pageNumber, pageSize);
-	    return ResponseEntity.ok(response);
+	@GetMapping("/get-all-news")
+	public Map<String, Object> getAllNews(
+	        @RequestParam(defaultValue = "1") Integer pageNumber,
+	        @RequestParam(defaultValue = "10") Integer pageSize,
+	        @RequestParam(required = false, defaultValue = "none") String Order){
+	    return newsService.getAllNews(pageNumber, pageSize, Order);
 	}
 
-
-
+	
+	
 	@DeleteMapping("/delete-news/{id}")
 	public String deleteNews(@PathVariable String id) {
 		return newsService.deleteNewsById(id);
 	}
+	
 
 	@GetMapping("/getNewsById/{id}")
 	public ResponseEntity<Optional<NewsEntity>> getById(@PathVariable String id) {
@@ -115,4 +116,6 @@ public class NewsController {
 		Optional<NewsEntity> response = newsService.newsGetById(id);
 		return ResponseEntity.ok(response);
 	}
+	
+	
 }
