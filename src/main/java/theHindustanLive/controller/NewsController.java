@@ -121,5 +121,9 @@ public class NewsController {
 	        @RequestParam(defaultValue = "10") Integer pageSize) {
 	    return newsService.getAllNews(pageNumber, pageSize);
 	}
+	@GetMapping("/get-all")
+	public List<NewsEntity> getAllNews() {
+	    return newsService.getAllNews();
+	}
 	
 }

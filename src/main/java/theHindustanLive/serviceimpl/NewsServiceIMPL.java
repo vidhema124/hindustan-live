@@ -478,4 +478,10 @@ public class NewsServiceIMPL implements NewsService {
 	    return response;
 	}
 
+	@Override
+	public List<NewsEntity> getAllNews() {
+		List<NewsEntity> response=newRespository.findAll();
+		return response;
+	}
+
 }

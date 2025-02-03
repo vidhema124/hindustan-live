@@ -23,6 +23,7 @@ import theHindustanLive.entity.NewsEntity;
 		List<NewsEntity> getNewsByTitle(String title);
 		 List<NewsEntity> findRandomNewsWithImage();
 		Map<String, Object> getAllNews(Integer pageNumber, Integer pageSize);
+		List<NewsEntity> getAllNews();
 
 	
 	
