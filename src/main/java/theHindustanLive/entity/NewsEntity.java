@@ -1,5 +1,8 @@
 package theHindustanLive.entity;
 
+import java.time.LocalDateTime;
+import java.util.Date;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -24,5 +27,7 @@ public class NewsEntity {
 	private String category;
 	private String imageUrl;
 	private String publisherIcon;
+	private Date updatedAt;
+	private Date createdAt;
 
 }

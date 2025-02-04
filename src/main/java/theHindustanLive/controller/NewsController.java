@@ -56,8 +56,8 @@ public class NewsController {
 	public Map<String, Object> getAllNews(
 	        @RequestParam(defaultValue = "1") Integer pageNumber,
 	        @RequestParam(defaultValue = "10") Integer pageSize,
-	        @RequestParam(required = false, defaultValue = "none") String Order){
-	    return newsService.getAllNews(pageNumber, pageSize, Order);
+	        @RequestParam(defaultValue = "asc") String order) {
+	    return newsService.getAllNews(pageNumber, pageSize, order);
 	}
 
 	 
@@ -115,12 +115,15 @@ public class NewsController {
 		Optional<NewsEntity> response = newsService.newsGetById(id);
 		return ResponseEntity.ok(response);
 	}
+	
 	@GetMapping("/get-all-news")
 	public Map<String, Object> getAllNews(
 	        @RequestParam(defaultValue = "1") Integer pageNumber,
 	        @RequestParam(defaultValue = "10") Integer pageSize) {
 	    return newsService.getAllNews(pageNumber, pageSize);
 	}
+
+
 	@GetMapping("/get-all")
 	public List<NewsEntity> getAllNews() {
 	    return newsService.getAllNews();

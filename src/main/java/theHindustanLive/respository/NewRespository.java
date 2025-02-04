@@ -31,5 +31,10 @@ public interface NewRespository extends MongoRepository<NewsEntity, String> {
 	
 	
 	
-	Page<NewsEntity> findAllByOrderByTitleAsc(Pageable pageable);
+	 Page<NewsEntity> findAllByOrderByTitleAsc(Pageable pageable);
+
+	    Page<NewsEntity> findAllByOrderByTitleDesc(Pageable pageable);
+	    
+		Page<NewsEntity> findAllByOrderByCreatedAtDesc(Pageable pageable);
+
 }
