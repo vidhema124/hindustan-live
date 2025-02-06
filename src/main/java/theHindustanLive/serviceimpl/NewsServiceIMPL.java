@@ -3,10 +3,12 @@ package theHindustanLive.serviceimpl;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.io.StringReader;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -37,6 +39,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 import lombok.AllArgsConstructor;
+import theHindustanLive.config.DateTimeUtil;
 import theHindustanLive.entity.NewsEntity;
 import theHindustanLive.respository.NewRespository;
 import theHindustanLive.service.NewsService;
@@ -67,100 +70,183 @@ public class NewsServiceIMPL implements NewsService {
 		PUBLISHER_ICONS.put("The Hindu", "https://vfic.tamu.edu/files/2014/03/LogoThe-Hindu2.png");
 		PUBLISHER_ICONS.put("Livemint News",
 				"https://tse4.mm.bing.net/th?id=OIP.xMcKwuoYnhP2UBBCt0WdKwHaBv&pid=Api&P=0&h=180");
-		PUBLISHER_ICONS.put("Ary News", "https://i.vimeocdn.com/channel/324633_980?mh=250&sig=6ad418f288f7e4319389389a03ebb3a16c0ad00299a5f60a626f9cd2f0c1d736&v=1");
-		
+		PUBLISHER_ICONS.put("Ary News",
+				"https://i.vimeocdn.com/channel/324633_980?mh=250&sig=6ad418f288f7e4319389389a03ebb3a16c0ad00299a5f60a626f9cd2f0c1d736&v=1");
+
 		PUBLISHER_ICONS.put("NBC News", "https://upload.wikimedia.org/wikipedia/commons/9/97/NBC_News_logo.png");
 		PUBLISHER_ICONS.put("Timesofindia", "https://logodix.com/logo/1113831.jpg");
 		PUBLISHER_ICONS.put("The Indian Express",
 				"https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/The_Indian_Express_logo.svg/606px-The_Indian_Express_logo.svg.png");
 	}
+//	@Override
+//	public List<NewsEntity> fetchNewsFromRSS(String categoryFilter) {
+//	    Map<String, NewsEntity> combinedNewsMap = new HashMap<>();
+//
+//	    try {
+//	        for (Map.Entry<String, String> entry : RSS_URLS.entrySet()) {
+//	            String urlString = entry.getKey();
+//	            String category = entry.getValue();
+//
+//	            if (categoryFilter != null && !category.equalsIgnoreCase(categoryFilter)) {
+//	                continue;
+//	            }
+//
+//	            URL url = new URL(urlString);
+//	            RestTemplate restTemplate = new RestTemplate();
+//	            String xmlData = restTemplate.getForObject(url.toURI(), String.class);
+//
+//	            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+//	            DocumentBuilder builder = factory.newDocumentBuilder();
+//	            InputSource is = new InputSource(new StringReader(xmlData));
+//	            org.w3c.dom.Document doc = builder.parse(is);
+//	            NodeList nodeList = doc.getElementsByTagName("item");
+//
+//	            int limit = Math.min(nodeList.getLength(), 10);
+//
+//	            for (int i = 0; i < limit; i++) {
+//	                Element element = (Element) nodeList.item(i);
+//
+//	                String title = element.getElementsByTagName("title").item(0).getTextContent();
+//	                String description = element.getElementsByTagName("description").item(0).getTextContent();
+//	                String link = element.getElementsByTagName("link").item(0).getTextContent();
+//	                String pubDate = element.getElementsByTagName("pubDate").item(0).getTextContent();
+//
+//	                String imageUrl = extractImageUrl(description);
+//	                NodeList mediaList = element.getElementsByTagName("media:content");
+//	                if (mediaList.getLength() > 0) {
+//	                    Element media = (Element) mediaList.item(0);
+//	                    String mediaImageUrl = media.getAttribute("url");
+//	                    if (mediaImageUrl != null && !mediaImageUrl.isEmpty()) {
+//	                        imageUrl = mediaImageUrl;
+//	                    }
+//	                }
+//
+//	                String publisher = getPublisherFromRSS(urlString);
+//	                String publisherIcon = getPublisherIcon(publisher);
+//	                if (publisherIcon == null || !isValidURL(publisherIcon)) {
+//	                    publisherIcon = "https://via.placeholder.com/150?text=No+Logo";
+//	                }
+//
+//	               
+//	                NewsEntity existingNews = mongoTemplate.findOne(Query.query(Criteria.where("title").is(title)), NewsEntity.class);
+//	                if (existingNews != null) {
+//	                   
+//	                    if (!existingNews.getPublisher().contains(publisher)) {
+//	                        existingNews.setPublisher(existingNews.getPublisher() + ", " + publisher);
+//	                        existingNews.setPublisherIcon(existingNews.getPublisherIcon() + ", " + publisherIcon);
+//	                    }
+//	                    existingNews.setUpdatedAt(new Date()); // Update timestamp
+//	                    mongoTemplate.save(existingNews);
+//	                    continue;
+//	                }
+//
+//	                // Naya news object create karein
+//	                NewsEntity news = new NewsEntity();
+//	                news.setTitle(title);
+//	                news.setDescription(description);
+//	                news.setLink(link);
+//	                news.setPubDate(pubDate);
+//	                news.setImageUrl(imageUrl);
+//	                news.setPublisher(publisher);
+//	                news.setPublisherIcon(publisherIcon);
+//	                news.setCategory(category);
+//	                news.setCreatedAt(new Date()); 
+//	                news.setUpdatedAt(new Date()); 
+//
+//	                combinedNewsMap.put(title, news);
+//	                mongoTemplate.save(news);
+//	            }
+//	        }
+//	    } catch (Exception e) {
+//	        e.printStackTrace();
+//	    }
+//
+//	    return new ArrayList<>(combinedNewsMap.values());
+//	}
+
 	@Override
 	public List<NewsEntity> fetchNewsFromRSS(String categoryFilter) {
-	    Map<String, NewsEntity> combinedNewsMap = new HashMap<>();
+		Map<String, NewsEntity> combinedNewsMap = new HashMap<>();
 
-	    try {
-	        for (Map.Entry<String, String> entry : RSS_URLS.entrySet()) {
-	            String urlString = entry.getKey();
-	            String category = entry.getValue();
+		try {
+			for (Map.Entry<String, String> entry : RSS_URLS.entrySet()) {
+				String urlString = entry.getKey();
+				String category = entry.getValue();
 
-	            if (categoryFilter != null && !category.equalsIgnoreCase(categoryFilter)) {
-	                continue;
-	            }
+				if (categoryFilter != null && !category.equalsIgnoreCase(categoryFilter)) {
+					continue;
+				}
 
-	            URL url = new URL(urlString);
-	            RestTemplate restTemplate = new RestTemplate();
-	            String xmlData = restTemplate.getForObject(url.toURI(), String.class);
+				URL url = new URL(urlString);
+				RestTemplate restTemplate = new RestTemplate();
+				String xmlData = restTemplate.getForObject(url.toURI(), String.class);
 
-	            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-	            DocumentBuilder builder = factory.newDocumentBuilder();
-	            InputSource is = new InputSource(new StringReader(xmlData));
-	            org.w3c.dom.Document doc = builder.parse(is);
-	            NodeList nodeList = doc.getElementsByTagName("item");
+				DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+				DocumentBuilder builder = factory.newDocumentBuilder();
+				InputSource is = new InputSource(new StringReader(xmlData));
+				org.w3c.dom.Document doc = builder.parse(is);
+				NodeList nodeList = doc.getElementsByTagName("item");
 
-	            int limit = Math.min(nodeList.getLength(), 10);
+				int limit = Math.min(nodeList.getLength(), 1);
 
-	            for (int i = 0; i < limit; i++) {
-	                Element element = (Element) nodeList.item(i);
+				for (int i = 0; i < limit; i++) {
+					Element element = (Element) nodeList.item(i);
 
-	                String title = element.getElementsByTagName("title").item(0).getTextContent();
-	                String description = element.getElementsByTagName("description").item(0).getTextContent();
-	                String link = element.getElementsByTagName("link").item(0).getTextContent();
-	                String pubDate = element.getElementsByTagName("pubDate").item(0).getTextContent();
+					String title = element.getElementsByTagName("title").item(0).getTextContent();
+					String description = element.getElementsByTagName("description").item(0).getTextContent();
+					String link = element.getElementsByTagName("link").item(0).getTextContent();
+					String pubDateStr = element.getElementsByTagName("pubDate").item(0).getTextContent();
 
-	                String imageUrl = extractImageUrl(description);
-	                NodeList mediaList = element.getElementsByTagName("media:content");
-	                if (mediaList.getLength() > 0) {
-	                    Element media = (Element) mediaList.item(0);
-	                    String mediaImageUrl = media.getAttribute("url");
-	                    if (mediaImageUrl != null && !mediaImageUrl.isEmpty()) {
-	                        imageUrl = mediaImageUrl;
-	                    }
-	                }
+					// Parsing pubDate from RSS
+					LocalDateTime pubDate = DateTimeUtil.parsePubDate(pubDateStr);
+					String imageUrl = extractImageUrl(description);
+					NodeList mediaList = element.getElementsByTagName("media:content");
+					if (mediaList.getLength() > 0) {
+						Element media = (Element) mediaList.item(0);
+						String mediaImageUrl = media.getAttribute("url");
+						if (mediaImageUrl != null && !mediaImageUrl.isEmpty()) {
+							imageUrl = mediaImageUrl;
+						}
+					}
 
-	                String publisher = getPublisherFromRSS(urlString);
-	                String publisherIcon = getPublisherIcon(publisher);
-	                if (publisherIcon == null || !isValidURL(publisherIcon)) {
-	                    publisherIcon = "https://via.placeholder.com/150?text=No+Logo";
-	                }
+					String publisher = getPublisherFromRSS(urlString);
+					String publisherIcon = getPublisherIcon(publisher);
+					if (publisherIcon == null || !isValidURL(publisherIcon)) {
+						publisherIcon = "https://via.placeholder.com/150?text=No+Logo";
+					}
 
-	                // Pehle check karein ki news database mein already exist karti hai ya nahi
-	                NewsEntity existingNews = mongoTemplate.findOne(Query.query(Criteria.where("title").is(title)), NewsEntity.class);
-	                if (existingNews != null) {
-	                    // Agar news pehle se hai, toh publisher aur icon merge kar dein
-	                    if (!existingNews.getPublisher().contains(publisher)) {
-	                        existingNews.setPublisher(existingNews.getPublisher() + ", " + publisher);
-	                        existingNews.setPublisherIcon(existingNews.getPublisherIcon() + ", " + publisherIcon);
-	                    }
-	                    existingNews.setUpdatedAt(new Date()); // Update timestamp
-	                    mongoTemplate.save(existingNews);
-	                    continue;
-	                }
+					NewsEntity existingNews = newRespository.findByTitle(title);
+					if (existingNews != null) {
+						if (!existingNews.getPublisher().contains(publisher)) {
+							existingNews.setPublisher(existingNews.getPublisher() + ", " + publisher);
+							existingNews.setPublisherIcon(existingNews.getPublisherIcon() + ", " + publisherIcon);
+						}
+						existingNews.setUpdatedAt(new Date());
+						newRespository.save(existingNews);
+						continue;
+					}
 
-	                // Naya news object create karein
-	                NewsEntity news = new NewsEntity();
-	                news.setTitle(title);
-	                news.setDescription(description);
-	                news.setLink(link);
-	                news.setPubDate(pubDate);
-	                news.setImageUrl(imageUrl);
-	                news.setPublisher(publisher);
-	                news.setPublisherIcon(publisherIcon);
-	                news.setCategory(category);
-	                news.setCreatedAt(new Date()); 
-	                news.setUpdatedAt(new Date()); 
+					NewsEntity news = new NewsEntity();
+					news.setTitle(title);
+					news.setDescription(description);
+					news.setLink(link);
+					news.setPubDate(pubDate); // Set parsed LocalDateTime directly
+					news.setImageUrl(imageUrl);
+					news.setPublisher(publisher);
+					news.setPublisherIcon(publisherIcon);
+					news.setCategory(category);
+					news.setCreatedAt(new Date());
+					news.setUpdatedAt(new Date());
 
-	                combinedNewsMap.put(title, news);
-	                mongoTemplate.save(news);
-	            }
-	        }
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	    }
-
-	    return new ArrayList<>(combinedNewsMap.values());
+					combinedNewsMap.put(title, news);
+					newRespository.save(news);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return new ArrayList<>(combinedNewsMap.values());
 	}
-
-
 	private String extractImageUrl(String description) {
 		if (description == null || description.isEmpty()) {
 			return null;
@@ -188,8 +274,7 @@ public class NewsServiceIMPL implements NewsService {
 			return "NBC News";
 		} else if (url.contains("livemint")) {
 			return "Livemint News";
-		}
-		else if (url.contains("arynews")) {
+		} else if (url.contains("arynews")) {
 			return "Ary News";
 		}
 		return "Unknown Publisher";
@@ -213,48 +298,6 @@ public class NewsServiceIMPL implements NewsService {
 	public void saveNews(List<NewsEntity> newsEntities) {
 		newRespository.saveAll(newsEntities);
 	}
-
-	@Override
-	public Map<String, Object> getAllNews(Integer pageNumber, Integer pageSize, String Order) {
-	    Pageable pageable = PageRequest.of(pageNumber - 1, pageSize);
-	    Page<NewsEntity> pageResponse = newRespository.findAll(pageable);
-	    List<NewsEntity> newsList = new ArrayList<>(pageResponse.getContent());
-
-	    
-	    newsList.sort((news1, news2) -> {
-	        String title1 = news1.getTitle();
-	        String title2 = news2.getTitle();
-
-	       
-	        if (!"none".equalsIgnoreCase(Order)) {
-	            
-	            char firstLetter1 = title1.charAt(0);
-	            char firstLetter2 = title2.charAt(0);
-
-	            
-	            int letterComparison = Character.compare(firstLetter1, firstLetter2);
-
-	            
-	            if ("desc".equalsIgnoreCase(Order)) {
-	                letterComparison = -letterComparison;  
-	            }
-
-	           
-	            if (letterComparison != 0) {
-	                return letterComparison;
-	            }
-	        }
-	        return 0;  
-	    });
-
-	    
-	    Map<String, Object> response = new HashMap<>();
-	    response.put("news", newsList);
-	    response.put("totalPages", pageResponse.getTotalPages());
-	    response.put("currentPage", pageResponse.getNumber() + 1);
-	    return response;
-	}
-
 
 	@Override
 	public String deleteNewsById(String id) {
@@ -308,6 +351,8 @@ public class NewsServiceIMPL implements NewsService {
 				.filter(news -> news.getImageUrl() != null && !news.getImageUrl().isEmpty())
 				.collect(Collectors.toList());
 
+		filteredNews.sort(Comparator.comparing(NewsEntity::getPubDate).reversed());
+
 		Map<String, List<NewsEntity>> groupedNews = filteredNews.stream()
 				.collect(Collectors.groupingBy(NewsEntity::getCategory));
 
@@ -318,6 +363,7 @@ public class NewsServiceIMPL implements NewsService {
 			categoryMap.put("news", entry.getValue());
 			categoryNewsList.add(categoryMap);
 		}
+
 		return categoryNewsList;
 	}
 
@@ -329,20 +375,23 @@ public class NewsServiceIMPL implements NewsService {
 
 	@Override
 	public Map<String, Object> getAllNews(Integer pageNumber, Integer pageSize) {
-	    Pageable pageable = PageRequest.of(pageNumber - 1, pageSize, Sort.by(Sort.Order.desc("pubDate")));
-	    Page<NewsEntity> pageResponse = newRespository.findAll(pageable);
-	    List<NewsEntity> newsList = new ArrayList<>(pageResponse.getContent());
+		Pageable pageable = PageRequest.of(pageNumber - 1, pageSize,
+				Sort.by(Sort.Order.desc("pubDate"), Sort.Order.desc("updatedAt")));
 
-	    Map<String, Object> response = new HashMap<>();
-	    response.put("news", newsList);
-	    response.put("totalPages", pageResponse.getTotalPages());
-	    response.put("currentPage", pageResponse.getNumber() + 1);
-	    return response;
+		Page<NewsEntity> pageResponse = newRespository.findAll(pageable);
+		List<NewsEntity> newsList = new ArrayList<>(pageResponse.getContent());
+
+		Map<String, Object> response = new HashMap<>();
+		response.put("news", newsList);
+		response.put("totalPages", pageResponse.getTotalPages());
+		response.put("currentPage", pageResponse.getNumber() + 1);
+
+		return response;
 	}
 
 	@Override
 	public List<NewsEntity> getAllNews() {
-		List<NewsEntity> response=newRespository.findAll();
+		List<NewsEntity> response = newRespository.findAll();
 		return response;
 	}
 

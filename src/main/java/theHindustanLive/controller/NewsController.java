@@ -40,6 +40,8 @@ public class NewsController {
 
 		return ResponseEntity.ok(response);
 	}
+	
+	
 
 	@PostMapping("/save-news")
 	public ResponseEntity<String> saveNews(@RequestBody List<NewsEntity> newsEntities) {
@@ -52,13 +54,13 @@ public class NewsController {
 	}
 
 
-	@GetMapping("/get-newsOrder")
-	public Map<String, Object> getAllNews(
-	        @RequestParam(defaultValue = "1") Integer pageNumber,
-	        @RequestParam(defaultValue = "10") Integer pageSize,
-	        @RequestParam(defaultValue = "asc") String order) {
-	    return newsService.getAllNews(pageNumber, pageSize, order);
-	}
+//	@GetMapping("/get-newsOrder")
+//	public Map<String, Object> getAllNews(
+//	        @RequestParam(defaultValue = "1") Integer pageNumber,
+//	        @RequestParam(defaultValue = "10") Integer pageSize,
+//	        @RequestParam(defaultValue = "asc") String order) {
+//	    return newsService.getAllNews(pageNumber, pageSize, order);
+//	}
 
 	 
 	@DeleteMapping("/delete-news/{id}")

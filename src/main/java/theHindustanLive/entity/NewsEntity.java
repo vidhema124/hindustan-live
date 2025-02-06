@@ -22,7 +22,7 @@ public class NewsEntity {
 	private String title;
 	private String description;
 	private String link;
-	private String pubDate;
+	private LocalDateTime pubDate;;
 	private String publisher;
 	private String category;
 	private String imageUrl;
