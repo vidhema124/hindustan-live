@@ -128,12 +128,12 @@ public class NewsController {
 	}
 
 	@GetMapping("/getslug/{slug}")
-    public ResponseEntity<NewsEntity> getNewsBySlug(@PathVariable String slug) {
-        NewsEntity news = newsService.getNewsBySlug(slug);
-        if (news == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
-        return ResponseEntity.ok(news);
-    }
+	public ResponseEntity<NewsEntity> getNewsBySlug(@PathVariable String slug) {
+		NewsEntity news = newsService.getNewsBySlug(slug);
+		if (news == null) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+		}
+		return ResponseEntity.ok(news);
+	}
 
 }
