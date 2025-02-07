@@ -127,7 +127,7 @@ public class NewsController {
 		return newsService.getAllNews();
 	}
 
-	@GetMapping("/getslug/{slug}")
+	@GetMapping("/getBySlug/{slug}")
 	public ResponseEntity<NewsEntity> getNewsBySlug(@PathVariable String slug) {
 		NewsEntity news = newsService.getNewsBySlug(slug);
 		if (news == null) {
