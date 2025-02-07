@@ -36,4 +36,6 @@ public interface NewsService {
 	List<NewsEntity> getAllNews();
 
 	Map<String, Object> getAllNews(Integer pageNumber, Integer pageSize);
+
+	public NewsEntity getNewsBySlug(String slug);
 }

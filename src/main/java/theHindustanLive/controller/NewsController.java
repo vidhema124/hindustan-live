@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -40,8 +41,6 @@ public class NewsController {
 
 		return ResponseEntity.ok(response);
 	}
-	
-	
 
 	@PostMapping("/save-news")
 	public ResponseEntity<String> saveNews(@RequestBody List<NewsEntity> newsEntities) {
@@ -53,21 +52,18 @@ public class NewsController {
 		}
 	}
 
+	// @GetMapping("/get-newsOrder")
+	// public Map<String, Object> getAllNews(
+	// @RequestParam(defaultValue = "1") Integer pageNumber,
+	// @RequestParam(defaultValue = "10") Integer pageSize,
+	// @RequestParam(defaultValue = "asc") String order) {
+	// return newsService.getAllNews(pageNumber, pageSize, order);
+	// }
 
-//	@GetMapping("/get-newsOrder")
-//	public Map<String, Object> getAllNews(
-//	        @RequestParam(defaultValue = "1") Integer pageNumber,
-//	        @RequestParam(defaultValue = "10") Integer pageSize,
-//	        @RequestParam(defaultValue = "asc") String order) {
-//	    return newsService.getAllNews(pageNumber, pageSize, order);
-//	}
-
-	 
 	@DeleteMapping("/delete-news/{id}")
 	public String deleteNews(@PathVariable String id) {
 		return newsService.deleteNewsById(id);
 	}
-	
 
 	@GetMapping("/getNewsById/{id}")
 	public ResponseEntity<Optional<NewsEntity>> getById(@PathVariable String id) {
@@ -109,26 +105,35 @@ public class NewsController {
 
 	@GetMapping("/get-news-by-title")
 	public ResponseEntity<List<NewsEntity>> getNewsByTitle(@RequestParam String title) {
-	    List<NewsEntity> response = newsService.getNewsByTitle(title);
-	    return ResponseEntity.ok(response);
+		List<NewsEntity> response = newsService.getNewsByTitle(title);
+		return ResponseEntity.ok(response);
 	}
+
 	@GetMapping("/testing/{id}")
 	public ResponseEntity<Optional<NewsEntity>> getByIdTesting(@PathVariable String id) {
 		Optional<NewsEntity> response = newsService.newsGetById(id);
 		return ResponseEntity.ok(response);
 	}
-	
+
 	@GetMapping("/get-all-news")
 	public Map<String, Object> getAllNews(
-	        @RequestParam(defaultValue = "1") Integer pageNumber,
-	        @RequestParam(defaultValue = "10") Integer pageSize) {
-	    return newsService.getAllNews(pageNumber, pageSize);
+			@RequestParam(defaultValue = "1") Integer pageNumber,
+			@RequestParam(defaultValue = "10") Integer pageSize) {
+		return newsService.getAllNews(pageNumber, pageSize);
 	}
-
 
 	@GetMapping("/get-all")
 	public List<NewsEntity> getAllNews() {
-	    return newsService.getAllNews();
+		return newsService.getAllNews();
 	}
-	
+
+	@GetMapping("/getslug/{slug}")
+    public ResponseEntity<NewsEntity> getNewsBySlug(@PathVariable String slug) {
+        NewsEntity news = newsService.getNewsBySlug(slug);
+        if (news == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+        return ResponseEntity.ok(news);
+    }
+
 }

@@ -29,5 +29,14 @@ public class NewsEntity {
 	private String publisherIcon;
 	private Date updatedAt;
 	private Date createdAt;
+	private String slug;
+
+	public void generateSlug() {
+        if (this.title != null) {
+            this.slug = this.title.toLowerCase()
+                    .replaceAll("[^a-z0-9\\s]", "") 
+                    .replaceAll("\\s+", "-"); 
+        }
+    }
 
 }

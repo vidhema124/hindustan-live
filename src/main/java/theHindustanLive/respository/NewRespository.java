@@ -39,4 +39,6 @@ public interface NewRespository extends MongoRepository<NewsEntity, String> {
 
 		NewsEntity findByTitle(String title);
 
+		NewsEntity findBySlug(String slug);
+
 }
