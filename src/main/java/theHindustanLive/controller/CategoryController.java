@@ -66,6 +66,5 @@ public class CategoryController {
 		response.put("message", result);
 		return ResponseEntity.ok(response);
 	}
-	
 
 }
