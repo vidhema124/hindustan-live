@@ -1,5 +1,6 @@
 package theHindustanLive.entity;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -15,14 +16,14 @@ import lombok.ToString;
 @Getter
 @ToString
 @Document(collection = "news")
-public class NewsEntity {
+public class NewsEntity implements Serializable{
 
 	@Id
 	private String id;
 	private String title;
 	private String description;
 	private String link;
-	private LocalDateTime pubDate;;
+	private Date pubDate;;
 	private String publisher;
 	private String category;
 	private String imageUrl;

@@ -4,6 +4,7 @@ import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.io.StringReader;
 
 import java.util.ArrayList;
@@ -23,6 +24,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -204,7 +207,9 @@ public class NewsServiceIMPL implements NewsService {
 					String pubDateStr = element.getElementsByTagName("pubDate").item(0).getTextContent();
 
 					// Parsing pubDate from RSS
-					LocalDateTime pubDate = DateTimeUtil.parsePubDate(pubDateStr);
+					LocalDateTime pubDateLocalDateTime = DateTimeUtil.parsePubDate(pubDateStr);
+					Date pubDate = Date.from(pubDateLocalDateTime.atZone(ZoneId.systemDefault()).toInstant());
+
 					String imageUrl = extractImageUrl(description);
 					NodeList mediaList = element.getElementsByTagName("media:content");
 					if (mediaList.getLength() > 0) {
@@ -236,7 +241,7 @@ public class NewsServiceIMPL implements NewsService {
 					news.setTitle(title);
 					news.setDescription(description);
 					news.setLink(link);
-					news.setPubDate(pubDate); // Set parsed LocalDateTime directly
+					news.setPubDate(pubDate); // Set parsed LocalDateTime directly?
 					news.setImageUrl(imageUrl);
 					news.setPublisher(publisher);
 					news.setPublisherIcon(publisherIcon);
@@ -404,8 +409,13 @@ public class NewsServiceIMPL implements NewsService {
 	}
 
 	@Override
-    public NewsEntity getNewsBySlug(String slug) {
-        return newRespository.findBySlug(slug);
-    }
+	@Cacheable(value = "newsCache", key = "#slug", unless = "#result == null")
+	public NewsEntity getNewsBySlug(String slug) {
+		return newRespository.findBySlug(slug);
+	}
 
+	@CacheEvict(value = "newsCache", allEntries = true)
+	public void clearCache() {
+		System.out.println("Cache cleared!");
+	}
 }
