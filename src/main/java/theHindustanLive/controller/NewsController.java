@@ -97,9 +97,9 @@ public class NewsController {
 	}
 
 	@GetMapping("/getnews-by-category")
-	public ResponseEntity<List<Map<String, Object>>> getNewsByCategory() {
-		List<Map<String, Object>> response = newsService.getNewsByCategory();
-		return ResponseEntity.ok(response);
+	public ResponseEntity<Map<String, List<Map<String, Object>>>> getNewsByCategory() {
+	    Map<String, List<Map<String, Object>>> response = newsService.getNewsByCategory();
+	    return ResponseEntity.ok(response);
 	}
 
 	@GetMapping("/get-news-by-title")

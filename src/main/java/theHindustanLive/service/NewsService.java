@@ -27,7 +27,7 @@ public interface NewsService {
 
 	List<NewsEntity> getNewsByCategory(String category);
 
-	List<Map<String, Object>> getNewsByCategory();
+	Map<String, List<Map<String, Object>>> getNewsByCategory();
 
 	List<NewsEntity> getNewsByTitle(String title);
 

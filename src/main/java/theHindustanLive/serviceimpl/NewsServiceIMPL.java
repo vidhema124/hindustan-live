@@ -357,7 +357,7 @@ public class NewsServiceIMPL implements NewsService {
 	}
 
 	@Override
-	public List<Map<String, Object>> getNewsByCategory() {
+	public Map<String, List<Map<String, Object>>> getNewsByCategory() {
 		List<NewsEntity> allNews = newRespository.findAll();
 
 		List<NewsEntity> filteredNews = allNews.stream()
@@ -366,18 +366,37 @@ public class NewsServiceIMPL implements NewsService {
 
 		filteredNews.sort(Comparator.comparing(NewsEntity::getPubDate).reversed());
 
-		Map<String, List<NewsEntity>> groupedNews = filteredNews.stream()
-				.collect(Collectors.groupingBy(NewsEntity::getCategory));
+		Map<String, List<Map<String, Object>>> groupedNews = new HashMap<>();
 
-		List<Map<String, Object>> categoryNewsList = new ArrayList<>();
-		for (Map.Entry<String, List<NewsEntity>> entry : groupedNews.entrySet()) {
-			Map<String, Object> categoryMap = new HashMap<>();
-			categoryMap.put("category", entry.getKey());
-			categoryMap.put("news", entry.getValue());
-			categoryNewsList.add(categoryMap);
+		
+		for (NewsEntity news : filteredNews) {
+			String category = news.getCategory();
+			Map<String, Object> newsMap = new HashMap<>();
+
+			
+			newsMap.put("_id", news.getId());
+			newsMap.put("title", news.getTitle());
+			newsMap.put("description", news.getDescription());
+			newsMap.put("link", news.getLink());
+			newsMap.put("pubDate", news.getPubDate());
+			newsMap.put("publisher", news.getPublisher());
+			newsMap.put("category", news.getCategory());
+			newsMap.put("imageUrl", news.getImageUrl());
+			newsMap.put("publisherIcon", news.getPublisherIcon());
+			newsMap.put("updatedAt", news.getUpdatedAt());
+			newsMap.put("createdAt", news.getCreatedAt());
+			newsMap.put("slug", news.getSlug());
+
+			groupedNews.computeIfAbsent(category, k -> new ArrayList<>()).add(newsMap);
 		}
 
-		return categoryNewsList;
+		groupedNews.forEach((category, newsList) -> {
+			if (newsList.size() > 7) {
+				groupedNews.put(category, newsList.stream().limit(7).collect(Collectors.toList()));
+			}
+		});
+
+		return groupedNews;
 	}
 
 	@Override
@@ -388,12 +407,11 @@ public class NewsServiceIMPL implements NewsService {
 
 	@Override
 	public Map<String, Object> getAllNews(Integer pageNumber, Integer pageSize) {
+		pageSize = 10;
 		Pageable pageable = PageRequest.of(pageNumber - 1, pageSize,
 				Sort.by(Sort.Order.desc("pubDate"), Sort.Order.desc("updatedAt")));
-
 		Page<NewsEntity> pageResponse = newRespository.findAll(pageable);
 		List<NewsEntity> newsList = new ArrayList<>(pageResponse.getContent());
-
 		Map<String, Object> response = new HashMap<>();
 		response.put("news", newsList);
 		response.put("totalPages", pageResponse.getTotalPages());
