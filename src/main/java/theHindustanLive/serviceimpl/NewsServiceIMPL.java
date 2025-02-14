@@ -196,7 +196,7 @@ public class NewsServiceIMPL implements NewsService {
 				org.w3c.dom.Document doc = builder.parse(is);
 				NodeList nodeList = doc.getElementsByTagName("item");
 
-				int limit = Math.min(nodeList.getLength(), 1);
+				int limit = Math.min(nodeList.getLength(), 10);
 
 				for (int i = 0; i < limit; i++) {
 					Element element = (Element) nodeList.item(i);
