@@ -1,5 +1,7 @@
 package theHindustanLive.controller;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,15 +32,25 @@ import theHindustanLive.service.NewsService;
 public class NewsController {
 	NewsService newsService;
 
+//	@GetMapping("/fetch-news")
+//	public ResponseEntity<List<NewsEntity>> fetchNews(@RequestParam(required = false) String category) {
+//		List<NewsEntity> response = newsService.fetchNewsFromRSS(category);
+//		if (category != null && !category.isEmpty()) {
+//			response = response.stream().filter(news -> category.equalsIgnoreCase(news.getCategory()))
+//					.collect(Collectors.toList());
+//		}
+//
+//		return ResponseEntity.ok(response);
+//	}
 	@GetMapping("/fetch-news")
 	public ResponseEntity<List<NewsEntity>> fetchNews(@RequestParam(required = false) String category) {
-		List<NewsEntity> response = newsService.fetchNewsFromRSS(category);
-		if (category != null && !category.isEmpty()) {
-			response = response.stream().filter(news -> category.equalsIgnoreCase(news.getCategory()))
-					.collect(Collectors.toList());
-		}
+	    List<String> categories = (category != null && !category.isEmpty())
+	            ? Arrays.asList(category.split(","))
+	            : Collections.emptyList();  // Empty list means fetch all news
 
-		return ResponseEntity.ok(response);
+	    List<NewsEntity> response = newsService.fetchNewsFromRSS(categories);
+
+	    return ResponseEntity.ok(response);
 	}
 
 	@PostMapping("/save-news")

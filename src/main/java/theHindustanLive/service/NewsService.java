@@ -17,7 +17,7 @@ public interface NewsService {
 
 	String deleteNewsById(String id);
 
-	List<NewsEntity> fetchNewsFromRSS(String categoryFilter);
+//	List<NewsEntity> fetchNewsFromRSS(String categoryFilter);
 
 	Optional<NewsEntity> newsGetById(String id);
 
@@ -38,4 +38,6 @@ public interface NewsService {
 	Map<String, Object> getAllNews(Integer pageNumber, Integer pageSize);
 
 	public NewsEntity getNewsBySlug(String slug);
+
+	List<NewsEntity> fetchNewsFromRSS(List<String> categoryFilters);
 }
