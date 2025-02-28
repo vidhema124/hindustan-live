@@ -1,19 +1,14 @@
 package theHindustanLive.serviceimpl;
 
+import java.io.StringReader;
 import java.net.URL;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.io.StringReader;
-
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -31,10 +26,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.aggregation.Aggregation;
-import org.springframework.data.mongodb.core.aggregation.AggregationResults;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.w3c.dom.Element;
@@ -51,6 +42,7 @@ import theHindustanLive.service.NewsService;
 @Service
 public class NewsServiceIMPL implements NewsService {
 	NewRespository newRespository;
+
 	
 	@Autowired
 	private MongoTemplate mongoTemplate;
@@ -59,61 +51,61 @@ public class NewsServiceIMPL implements NewsService {
 	private static final Map<String, String> PUBLISHER_ICONS = new HashMap<>();
 
 	static {
-		
-		RSS_URLS.put("https://www.bhaskar.com/rss-v1--category-1053.xml", "Sports");
-	    RSS_URLS.put("https://www.thehindu.com/sport/feeder/default.rss", "Sports");
-	    RSS_URLS.put("https://arynews.tv/category/sports/feed/", "Sports");  
-	   
-	    RSS_URLS.put("https://cms.patrika.com/blog/category/health-news/feed/", "Health");
-	    RSS_URLS.put("https://www.thehindu.com/sci-tech/health/feeder/default.rss", "Health");
-	    RSS_URLS.put("https://feeds.nbcnews.com/nbcnews/public/health", "Health"); 
-	    
-	    RSS_URLS.put("https://www.bhaskar.com/rss-v1--category-1051.xml", "Business");
-	    RSS_URLS.put("https://www.thehindu.com/business/feeder/default.rss", "Business");
-	    RSS_URLS.put("https://arynews.tv/category/business/feed/", "Business");
-	    
-	    RSS_URLS.put("https://feeds.science.org/rss/science.xml", "Science");
-	    RSS_URLS.put("https://www.thehindu.com/sci-tech/science/feeder/default.rss", "Science");
-	    RSS_URLS.put("https://www.livemint.com/rss/science", "Science");
-        
-	    RSS_URLS.put("https://www.bhaskar.com/rss-v1--category-5707.xml", "Technology");
-        RSS_URLS.put("https://arynews.tv/category/sci-techno/feed/", "Technology");
-        
-        RSS_URLS.put("https://www.bhaskar.com/rss-v1--category-1125.xml", "World");
-        RSS_URLS.put("https://feeds.nbcnews.com/nbcnews/public/news", "World");
-	    RSS_URLS.put("https://www.livemint.com/rss/news.xml", "World");
-	    
-	    RSS_URLS.put("https://www.bhaskar.com/rss-v1--category-1061.xml", "India");
-	    RSS_URLS.put("https://timesofindia.indiatimes.com/rssfeeds/-2128936835.cms", "India");
-	    RSS_URLS.put("https://timesofindia.indiatimes.com/rssfeeds/-2128838597.cms", "India");
-	    
-	    RSS_URLS.put("https://www.bhaskar.com/rss-v1--category-1740.xml", "Local");
-	    RSS_URLS.put("https://timesofindia.indiatimes.com/rssfeeds/3012544.cms", "Local");
-	    RSS_URLS.put("https://timesofindia.indiatimes.com/rssfeeds/-2128839596.cms", "Local");
-	    
-	    RSS_URLS.put("https://www.bhaskar.com/rss-v1--category-11215.xml", "Entertainment");
-        RSS_URLS.put("https://timesofindia.indiatimes.com/rssfeeds/2886704.cms", "Entertainment");
-	    
-	   
-	    PUBLISHER_ICONS.put("The Hindu", "https://vfic.tamu.edu/files/2014/03/LogoThe-Hindu2.png");
-	    PUBLISHER_ICONS.put("NBC News", "https://upload.wikimedia.org/wikipedia/commons/9/97/NBC_News_logo.png");
-	    PUBLISHER_ICONS.put("Timesofindia", "https://logodix.com/logo/1113831.jpg");
-	    PUBLISHER_ICONS.put("Livemint News", "https://tse4.mm.bing.net/th?id=OIP.xMcKwuoYnhP2UBBCt0WdKwHaBv&pid=Api&P=0&h=180");
-	    PUBLISHER_ICONS.put("Ary News",
-				"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQVRrQiEXpTEncBl1iP09qPYf6P88YR7d1Chw&s");
-	    PUBLISHER_ICONS.put("AAAS News","https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSy61zAinBEKbPgFliUa9eU_YmJUm-rE8W_Kw&s");
-	    PUBLISHER_ICONS.put("The Indian Express",
-				"https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/The_Indian_Express_logo.svg/606px-The_Indian_Express_logo.svg.png");
-	    PUBLISHER_ICONS.put("Danik Bhaskar",
-				"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRFSaPn1bxgi0F9iAfHYl4Q79Q42VUPa4wT-A&s");
-	    PUBLISHER_ICONS.put("ABP News",
-				"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTomfFMcDUU8umzGHL5nksmsjvDeJYXl66wuQ&s");
-	    PUBLISHER_ICONS.put("Patrika News",
-				"https://www.patrika.com/images/patrika-logo.jpg");
-	    
 	
-	}
-	
+	RSS_URLS.put("https://www.bhaskar.com/rss-v1--category-1053.xml", "Sports");
+    RSS_URLS.put("https://www.thehindu.com/sport/feeder/default.rss", "Sports");
+    RSS_URLS.put("https://arynews.tv/category/sports/feed/", "Sports");  
+   
+    RSS_URLS.put("https://cms.patrika.com/blog/category/health-news/feed/", "Health");
+    RSS_URLS.put("https://www.thehindu.com/sci-tech/health/feeder/default.rss", "Health");
+    RSS_URLS.put("https://feeds.nbcnews.com/nbcnews/public/health", "Health"); 
+    
+    RSS_URLS.put("https://www.bhaskar.com/rss-v1--category-1051.xml", "Business");
+    RSS_URLS.put("https://www.thehindu.com/business/feeder/default.rss", "Business");
+    RSS_URLS.put("https://arynews.tv/category/business/feed/", "Business");
+    
+    RSS_URLS.put("https://feeds.science.org/rss/science.xml", "Science");
+    RSS_URLS.put("https://www.thehindu.com/sci-tech/science/feeder/default.rss", "Science");
+    RSS_URLS.put("https://www.livemint.com/rss/science", "Science");
+    
+    RSS_URLS.put("https://www.bhaskar.com/rss-v1--category-5707.xml", "Technology");
+    RSS_URLS.put("https://arynews.tv/category/sci-techno/feed/", "Technology");
+    
+    RSS_URLS.put("https://www.bhaskar.com/rss-v1--category-1125.xml", "World");
+    RSS_URLS.put("https://feeds.nbcnews.com/nbcnews/public/news", "World");
+    RSS_URLS.put("https://www.livemint.com/rss/news.xml", "World");
+    
+    RSS_URLS.put("https://www.bhaskar.com/rss-v1--category-1061.xml", "India");
+    RSS_URLS.put("https://timesofindia.indiatimes.com/rssfeeds/-2128936835.cms", "India");
+    RSS_URLS.put("https://timesofindia.indiatimes.com/rssfeeds/-2128838597.cms", "India");
+    
+    RSS_URLS.put("https://www.bhaskar.com/rss-v1--category-1740.xml", "Local");
+    RSS_URLS.put("https://timesofindia.indiatimes.com/rssfeeds/3012544.cms", "Local");
+    RSS_URLS.put("https://timesofindia.indiatimes.com/rssfeeds/-2128839596.cms", "Local");
+    
+    RSS_URLS.put("https://www.bhaskar.com/rss-v1--category-11215.xml", "Entertainment");
+    RSS_URLS.put("https://timesofindia.indiatimes.com/rssfeeds/2886704.cms", "Entertainment");
+    
+   
+    PUBLISHER_ICONS.put("The Hindu", "https://vfic.tamu.edu/files/2014/03/LogoThe-Hindu2.png");
+    PUBLISHER_ICONS.put("NBC News", "https://upload.wikimedia.org/wikipedia/commons/9/97/NBC_News_logo.png");
+    PUBLISHER_ICONS.put("Timesofindia", "https://logodix.com/logo/1113831.jpg");
+    PUBLISHER_ICONS.put("Livemint News", "https://tse4.mm.bing.net/th?id=OIP.xMcKwuoYnhP2UBBCt0WdKwHaBv&pid=Api&P=0&h=180");
+    PUBLISHER_ICONS.put("Ary News",
+			"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQVRrQiEXpTEncBl1iP09qPYf6P88YR7d1Chw&s");
+    PUBLISHER_ICONS.put("AAAS News","https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSy61zAinBEKbPgFliUa9eU_YmJUm-rE8W_Kw&s");
+    PUBLISHER_ICONS.put("The Indian Express",
+			"https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/The_Indian_Express_logo.svg/606px-The_Indian_Express_logo.svg.png");
+    PUBLISHER_ICONS.put("Danik Bhaskar",
+			"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRFSaPn1bxgi0F9iAfHYl4Q79Q42VUPa4wT-A&s");
+    PUBLISHER_ICONS.put("ABP News",
+			"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTomfFMcDUU8umzGHL5nksmsjvDeJYXl66wuQ&s");
+    PUBLISHER_ICONS.put("Patrika News",
+			"https://www.patrika.com/images/patrika-logo.jpg");
+    
+
+}
+
 	@Override
 	public List<NewsEntity> fetchNewsFromRSS(List<String> categoryFilters) {
 	    Map<String, NewsEntity> combinedNewsMap = new HashMap<>();
@@ -127,157 +119,147 @@ public class NewsServiceIMPL implements NewsService {
 	                continue;
 	            }
 
-	            URL url = new URL(urlString);
-	            RestTemplate restTemplate = new RestTemplate();
-	            String xmlData = restTemplate.getForObject(url.toURI(), String.class);
+				URL url = new URL(urlString);
+				RestTemplate restTemplate = new RestTemplate();
+				String xmlData = restTemplate.getForObject(url.toURI(), String.class);
 
-	            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-	            DocumentBuilder builder = factory.newDocumentBuilder();
-	            InputSource is = new InputSource(new StringReader(xmlData));
-	            org.w3c.dom.Document doc = builder.parse(is);
-	            NodeList nodeList = doc.getElementsByTagName("item");
+				DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+				DocumentBuilder builder = factory.newDocumentBuilder();
+				InputSource is = new InputSource(new StringReader(xmlData));
+				org.w3c.dom.Document doc = builder.parse(is);
+				NodeList nodeList = doc.getElementsByTagName("item");
 
-	            int limit = Math.min(nodeList.getLength(), 5);
+				int limit = Math.min(nodeList.getLength(), 5);
 
-	            for (int i = 0; i < limit; i++) {
-	                Element element = (Element) nodeList.item(i);
+				for (int i = 0; i < limit; i++) {
+					Element element = (Element) nodeList.item(i);
 
-	                String title = element.getElementsByTagName("title").item(0).getTextContent();
-	                String description = element.getElementsByTagName("description").item(0).getTextContent();
-	                String link = element.getElementsByTagName("link").item(0).getTextContent();
-	                String pubDateStr = element.getElementsByTagName("pubDate").item(0).getTextContent();
+					String title = element.getElementsByTagName("title").item(0).getTextContent();
+					String description = element.getElementsByTagName("description").item(0).getTextContent();
+					String link = element.getElementsByTagName("link").item(0).getTextContent();
+					String pubDateStr = element.getElementsByTagName("pubDate").item(0).getTextContent();
 
-	                LocalDateTime pubDateLocalDateTime = DateTimeUtil.parsePubDate(pubDateStr);
-	                Date pubDate = Date.from(pubDateLocalDateTime.atZone(ZoneId.systemDefault()).toInstant());
+					// Parsing pubDate from RSS
+					LocalDateTime pubDateLocalDateTime = DateTimeUtil.parsePubDate(pubDateStr);
+					Date pubDate = Date.from(pubDateLocalDateTime.atZone(ZoneId.systemDefault()).toInstant());
 
-	                String imageUrl = extractImageUrl(element, description);
+					String imageUrl = extractImageUrl(description);
+					NodeList mediaList = element.getElementsByTagName("media:content");
+					if (mediaList.getLength() > 0) {
+						Element media = (Element) mediaList.item(0);
+						String mediaImageUrl = media.getAttribute("url");
+						if (mediaImageUrl != null && !mediaImageUrl.isEmpty()) {
+							imageUrl = mediaImageUrl;
+						}
+						
+					}
+					
+					String publisher = getPublisherFromRSS(urlString);
+					String publisherIcon = getPublisherIcon(publisher)
+;
+					if (publisherIcon == null || !isValidURL(publisherIcon)) {
+						publisherIcon = "https://via.placeholder.com/150?text=No+Logo";
+					}
 
-	                String publisher = getPublisherFromRSS(urlString);
-	                String publisherIcon = getPublisherIcon(publisher);
+					NewsEntity existingNews = newRespository.findByTitle(title);
+					if (existingNews != null) {
+						if (!existingNews.getPublisher().contains(publisher)) {
+							existingNews.setPublisher(existingNews.getPublisher() + ", " + publisher);
+							existingNews.setPublisherIcon(existingNews.getPublisherIcon() + ", " + publisherIcon);
+						}
+						existingNews.setUpdatedAt(new Date());
+						newRespository.save(existingNews);
+						continue;
+					}
 
-	                if (publisherIcon == null || !isValidURL(publisherIcon)) {
-	                    publisherIcon = "https://via.placeholder.com/150?text=No+Logo";
-	                }
+					NewsEntity news = new NewsEntity();
+					news.setTitle(title);
+					news.setDescription(description);
+					news.setLink(link)
+;
+					news.setPubDate(pubDate); // Set parsed LocalDateTime directly?
+					news.setImageUrl(imageUrl);
+					news.setPublisher(publisher)
+;
+					news.setPublisherIcon(publisherIcon);
+					news.setCategory(category);
+					news.setCreatedAt(new Date());
+					news.setUpdatedAt(new Date());
+					news.generateSlug();
 
-	                NewsEntity existingNews = newRespository.findByTitle(title);
-	                if (existingNews != null) {
-	                    if (!existingNews.getPublisher().contains(publisher)) {
-	                        existingNews.setPublisher(existingNews.getPublisher() + ", " + publisher);
-	                        existingNews.setPublisherIcon(existingNews.getPublisherIcon() + ", " + publisherIcon);
-	                    }
-	                    existingNews.setUpdatedAt(new Date());
-	                    newRespository.save(existingNews);
-	                    continue;
-	                }
+					combinedNewsMap.put(title, news);
+					newRespository.save(news);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return new ArrayList<>(combinedNewsMap.values());
+	}
 
-	                NewsEntity news = new NewsEntity();
-	                news.setTitle(title);
-	                news.setDescription(description);
-	                news.setLink(link);
-	                news.setPubDate(pubDate);
-	                news.setImageUrl(imageUrl);
-	                news.setPublisher(publisher);
-	                news.setPublisherIcon(publisherIcon);
-	                news.setCategory(category);
-	                news.setCreatedAt(new Date());
-	                news.setUpdatedAt(new Date());
-	                news.generateSlug();
+	private String extractImageUrl(String description) {
+		if (description == null || description.isEmpty()) {
+			return null;
+		}
+		try {
+			Pattern pattern = Pattern.compile("<img[^>]*src=\"([^\"]*)\"");
+			Matcher matcher = pattern.matcher(description);
+			if (matcher.find()) {
+				return matcher.group(1);
+			}
+		} catch (Exception e) {
+			System.err.println("Error extracting image URL: " + e.getMessage());
+		}
+		return null;
+	}
 
-	                combinedNewsMap.put(title, news);
-	                newRespository.save(news);
-	            }
-	        }
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	    }
-	    return new ArrayList<>(combinedNewsMap.values());
+	private String getPublisherFromRSS(String url) {
+    if (url.contains("thehindu")) {
+        return "The Hindu";
+    } else if (url.contains("nbcnews")) {
+        return "NBC News";
+    } else if (url.contains("timesofindia")) {
+        return "Timesofindia";
+    } else if (url.contains("livemint")) {
+        return "Livemint News";
+    } else if (url.contains("arynews")) {
+        return "Ary News";
+    } else if (url.contains("science")) {
+        return "AAAS News";
+    }else if (url.contains("indianexpress")) {
+		return "The Indian Express";
+		}
+    else if (url.contains("bhaskar")) {
+  		return "Danik Bhaskar";
+  		}
+    else if (url.contains("abplive")) {
+  		return "ABP News";
+  		}
+    else if (url.contains("patrika")) {
+  		return "Patrika News";
+  		}
+    return "Unknown Publisher";
+}
+
+	private String getPublisherIcon(String publisher) {
+		return PUBLISHER_ICONS.getOrDefault(publisher, "https://via.placeholder.com/150");
 	}
 
 	private boolean isValidURL(String url) {
-	    try {
-	        new URL(url).toURI();
-	        return true;
-	    } catch (Exception e) {
-	        return false;
-	    }
+		try {
+			URL validatedUrl = new URL(url);
+			validatedUrl.toURI();
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
 	}
-
-	private String extractImageUrl(Element element, String description) {
-	    try {
-	        NodeList mediaList = element.getElementsByTagName("media:content");
-	        if (mediaList.getLength() > 0) {
-	            Element media = (Element) mediaList.item(0);
-	            String mediaImageUrl = media.getAttribute("url");
-	            if (mediaImageUrl != null && !mediaImageUrl.isEmpty()) {
-	                return mediaImageUrl;
-	            }
-	        }
-
-	        NodeList enclosureList = element.getElementsByTagName("enclosure");
-	        if (enclosureList.getLength() > 0) {
-	            Element enclosure = (Element) enclosureList.item(0);
-	            String enclosureUrl = enclosure.getAttribute("url");
-	            if (enclosureUrl != null && !enclosureUrl.isEmpty()) {
-	                return enclosureUrl;
-	            }
-	        }
-
-	        return extractImageFromDescription(description);
-
-	    } catch (Exception e) {
-	        System.err.println("Error extracting image URL: " + e.getMessage());
-	    }
-	    return null;
-	}
-
-	private String extractImageFromDescription(String description) {
-	    if (description == null || description.isEmpty()) {
-	        return null;
-	    }
-	    try {
-	        Pattern pattern = Pattern.compile("<img[^>]*src=\"([^\"]*)\"");
-	        Matcher matcher = pattern.matcher(description);
-	        if (matcher.find()) {
-	            return matcher.group(1);
-	        }
-	    } catch (Exception e) {
-	        System.err.println("Error extracting image URL from description: " + e.getMessage());
-	    }
-	    return null;
-	}
-
-
-	private String getPublisherFromRSS(String url) {
-	    if (url.contains("thehindu")) {
-	        return "The Hindu";
-	    } else if (url.contains("nbcnews")) {
-	        return "NBC News";
-	    } else if (url.contains("timesofindia")) {
-	        return "Timesofindia";
-	    } else if (url.contains("livemint")) {
-	        return "Livemint News";
-	    } else if (url.contains("arynews")) {
-	        return "Ary News";
-	    } else if (url.contains("science")) {
-	        return "AAAS News";
-	    }else if (url.contains("indianexpress")) {
-  		return "The Indian Express";
-  		}
-	    else if (url.contains("bhaskar")) {
-	  		return "Danik Bhaskar";
-	  		}
-	    else if (url.contains("abplive")) {
-	  		return "ABP News";
-	  		}
-	    else if (url.contains("patrika")) {
-	  		return "Patrika News";
-	  		}
-	    return "Unknown Publisher";
-	}
-
-	private String getPublisherIcon(String publisher) {
-	    return PUBLISHER_ICONS.getOrDefault(publisher, "https://via.placeholder.com/150");
-	}
+	
+	
+	
+	
+	
+	
 	
 //	@Autowired
 //	private MongoTemplate mongoTemplate;
