@@ -53,17 +53,7 @@ public class NewsController {
 	    return ResponseEntity.ok(response);
 	}
 
-//	@PostMapping("/save-news")
-//	public ResponseEntity<String> saveNews(@RequestBody List<NewsEntity> newsEntities) {
-//		try {
-//			newsService.saveNews(newsEntities);
-//			return ResponseEntity.ok("News saved successfully!");
-//		} catch (Exception e) {
-//			return ResponseEntity.ok("Failed to save news: " + e.getMessage());
-//		}
-//	}
 
-	
 	@PostMapping("/save-news")
 	public ResponseEntity<String> saveNews(@RequestBody NewsEntity newsEntity) {
 	    try {

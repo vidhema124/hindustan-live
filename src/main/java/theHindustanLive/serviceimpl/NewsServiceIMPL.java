@@ -1,6 +1,8 @@
 package theHindustanLive.serviceimpl;
 
 import java.io.StringReader;
+import java.util.logging.Logger;
+
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -426,15 +428,22 @@ public class NewsServiceIMPL implements NewsService {
 //		}
 //	}
 
-	@Override
-	public void saveNews(List<NewsEntity> newsEntities) {
-		newRespository.saveAll(newsEntities);
-	}
+
 	
 	@Override
 	public void saveSingleNews(NewsEntity newsEntity) {
+	    Date now = new Date();
+	      if (newsEntity.getCreatedAt() == null) {
+	        newsEntity.setCreatedAt(now);
+	    }
+	    newsEntity.setUpdatedAt(now);
+	      if (newsEntity.getPubDate() == null) {
+	        newsEntity.setPubDate(now);
+	    }
+	    newsEntity.generateSlug();
 	    newRespository.save(newsEntity);
 	}
+
 
 
 	@Override

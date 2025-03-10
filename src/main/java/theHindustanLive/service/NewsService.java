@@ -12,7 +12,7 @@ import theHindustanLive.entity.NewsEntity;
 
 public interface NewsService {
 
-	void saveNews(List<NewsEntity> newsEntities);
+//	void saveNews(List<NewsEntity> newsEntities);
 //		Map<String, Object> getAllNews(Integer pageNumber, Integer pageSize, String Order);
 
 	String deleteNewsById(String id);

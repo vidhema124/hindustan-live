@@ -33,19 +33,13 @@ public class NewsEntity implements Serializable{
 	private Date createdAt;
 	private String slug;
 
-//	public void generateSlug() {
-//        if (this.title != null) {
-//            this.slug = this.title.toLowerCase()
-//                    .replaceAll("[^a-z0-9\\s]", "") 
-//                    .replaceAll("\\s+", "-"); 
-//        }
-//    }
+
 	public void generateSlug() {
 	    if (this.title != null) {
-	        this.slug = Normalizer.normalize(this.title.trim(), Normalizer.Form.NFD) // Normalize text
-	                .replaceAll("[^\\p{L}\\p{N}\\s]", "")  // Remove special characters
-	                .replaceAll("\\s+", "-")  // Replace spaces with '-'
-	                .toLowerCase(); // Convert to lowercase
+	        this.slug = Normalizer.normalize(this.title.trim(), Normalizer.Form.NFD) 
+	                .replaceAll("[^\\p{L}\\p{N}\\s]", "")  
+	                .replaceAll("\\s+", "-") 
+	                .toLowerCase();
 	    }
 	    }
 }
