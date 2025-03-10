@@ -430,6 +430,12 @@ public class NewsServiceIMPL implements NewsService {
 	public void saveNews(List<NewsEntity> newsEntities) {
 		newRespository.saveAll(newsEntities);
 	}
+	
+	@Override
+	public void saveSingleNews(NewsEntity newsEntity) {
+	    newRespository.save(newsEntity);
+	}
+
 
 	@Override
 	public String deleteNewsById(String id) {

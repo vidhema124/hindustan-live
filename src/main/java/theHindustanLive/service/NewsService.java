@@ -40,4 +40,6 @@ public interface NewsService {
 	public NewsEntity getNewsBySlug(String slug);
 
 	List<NewsEntity> fetchNewsFromRSS(List<String> categoryFilters);
+
+	void saveSingleNews(NewsEntity newsEntity);
 }
